@@ -10,6 +10,7 @@ from rest_framework.viewsets import ModelViewSet
 from .serializers import UserSerializer, UserSerializerWithToken
 from .models import User
 
+
 @api_view(['GET'])
 def current_user(request):
     """
