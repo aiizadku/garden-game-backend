@@ -138,6 +138,7 @@ def set_is_new(request):
 
 
 
+
 @api_view(['GET'])
 def current_user(request):
     """

@@ -1,7 +1,6 @@
 from django.urls import path
 from . import views
 
-# .../gardens/
 urlpatterns = [
     path('current_user/', current_user, name='current_user'),
     path('users/', UserList.as_view()),
