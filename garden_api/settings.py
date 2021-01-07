@@ -40,6 +40,7 @@ INSTALLED_APPS = [
     'rest_framework',
     'gardens',
     'corsheaders'
+
 ]
 
 MIDDLEWARE = [
@@ -153,3 +154,7 @@ USE_TZ = True
 # https://docs.djangoproject.com/en/3.1/howto/static-files/
 
 STATIC_URL = '/static/'
+
+REST_FRAMEWORK = {
+    'DEFAULT_PERMISSION_CLASSES': ('rest_framework.permissions.IsAuthenticated',)
+}

@@ -1,8 +1,24 @@
 from rest_framework import serializers
 from rest_framework_jwt.settings import api_settings
 from django.contrib.auth.models import User
+from rest_framework.serializers import ModelSerializer
+from .models import Game, Garden, Plant, Plants_in_garden
 
-from .models import Game
+class PlantSerializer(ModelSerializer):
+    class Meta:
+        model = Plant
+        fields = ('id', 'flower_name', 'region', 'cost', 'level', 'time_to_mature', 'exp_value', 'currency', 'desc')
+
+class GardenSerializer(ModelSerializer):
+    class Meta:
+        model = Garden
+        fields = ('user_id', 'rows', 'columns')
+
+class Plants_in_gardenSerializer(ModelSerializer):
+    class Meta:
+        model = Plants_in_garden
+        fields = ('plant_id', 'garden_id', 'harvested', 'watered', 'remaining_time', 'row_num', 'column_num')
+
 
 class ProfileSerializer(serializers.ModelSerializer):
     class Meta:
@@ -39,3 +55,4 @@ class UserSerializerWithToken(serializers.ModelSerializer):
     class Meta:
         model = User
         fields = '__all__'
+
