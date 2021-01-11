@@ -19,7 +19,8 @@ INSERT INTO gardens_plant(flower_name, cost, level, time_to_mature, exp_value, c
 VALUES ('Jerelily', 3, 2, 08.00, 5, 5, 'Quebec', 'Though not native to the reagion, the Jerelily found its way to the frozen area of the North.');
 
 -- 6
-INSERT INTO gardens_plant(flower_name, cost, level, time_to_mature, exp_value, currency, region, description) VALUES ('Timint', 5, 3, 11.00, 5, 9, 'New Orleans', 'The Timint has forced itself to become purple through sheer wilpower.');
+INSERT INTO gardens_plant(flower_name, cost, level, time_to_mature, exp_value, currency, region, description) 
+VALUES ('Timint', 5, 3, 11.00, 5, 9, 'New Orleans', 'The Timint has forced itself to become purple through sheer wilpower.');
 
 -- 7
 INSERT INTO gardens_plant(flower_name, cost, level, time_to_mature, exp_value, currency, region, description) 
@@ -30,7 +31,8 @@ INSERT INTO gardens_plant(flower_name, cost, level, time_to_mature, exp_value, c
 VALUES ('Geovannirod', 10, 4, 14.00, 5, 14, 'River Grove', 'The Geovannirod has a heart of gold and legend says it has written a book about soccer.');
 
 -- 9
-INSERT INTO gardens_plant(flower_name, cost, level, time_to_mature, exp_value, currency, region, description) VALUES ('Heather', 10, 4, 14.00, 5, 14, 'Columbia', 'You will often see the Heather flower solving puzzles while dreaming about going for a nice hike.');
+INSERT INTO gardens_plant(flower_name, cost, level, time_to_mature, exp_value, currency, region, description) 
+VALUES ('Heather', 10, 4, 14.00, 5, 14, 'Columbia', 'You will often see the Heather flower solving puzzles while dreaming about going for a nice hike.');
 
 -- 10
 INSERT INTO gardens_plant(flower_name, cost, level, time_to_mature, exp_value, currency, region, description) 
