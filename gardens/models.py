@@ -29,7 +29,7 @@ class Plant(models.Model):
 
 
 class Garden(models.Model):
-    user_id = models.ForeignKey(User, on_delete=models.CASCADE)
+    user = models.OneToOneField(User, on_delete=models.CASCADE, related_name="garden")
     rows = models.IntegerField(default=2)
     columns = models.IntegerField(default=4)
 

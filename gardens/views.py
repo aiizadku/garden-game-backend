@@ -11,8 +11,6 @@ from rest_framework.views import APIView
 from rest_framework.viewsets import ModelViewSet
 
 
-
-
 # Helper Functions
 def _get_user(user_id):
     """Returns corresponding user object or None."""
@@ -21,12 +19,14 @@ def _get_user(user_id):
     except:
         return None
 
+
 def _get_plant(plant_id):
     """Returns corresponding plant object or None."""
     try:
         return Plant.objects.get(id=plant_id)
     except:
         return None
+
 
 def _get_garden(garden_id):
     """Returns corresponding garden object or None."""
@@ -35,10 +35,12 @@ def _get_garden(garden_id):
     except:
         return None
 
+
 def _get_plant_in_garden(garden_id, row_number, column_number):
     """Returns corresponding plant_in_garden or None."""
-    plant = Plants_in_garden.objects.filter(garden_id=garden_id).filter(row_num=row_number).filter(column_num=column_number)
-    if len(plant) > 0: # Should only be 1 plant in that location
+    plant = Plants_in_garden.objects.filter(garden_id=garden_id).filter(
+        row_num=row_number).filter(column_num=column_number)
+    if len(plant) > 0:  # Should only be 1 plant in that location
         return plant[0]
     else:
         return None
@@ -52,13 +54,14 @@ def harvest(request):
     """
     if request.method != "POST":
         return JsonResponse({"status": f"Error 405: Expected POST method. Received {request.method}"}, status=405)
-    
+
     # Look up plant info in Plant table
     exp = 0
     currency = 0
     # Add currency and exp to user
     # User.objects.
     return JsonResponse({"status": f"Received harvest request: Added {exp} exp and {currency} currency"}, status=200)
+
 
 def plant(request):
     """
@@ -69,6 +72,7 @@ def plant(request):
         return JsonResponse({"status": f"Error 405: Expected POST method. Received {request.method}"}, status=405)
     return JsonResponse({"status": "Received plant request"}, status=200)
 
+
 def water(request):
     """
     Called when adding or removing the watered status to a plant.\n
@@ -77,6 +81,7 @@ def water(request):
     if request.method != "POST":
         return JsonResponse({"status": f"Error 405: Expected POST method. Received {request.method}"}, status=405)
     return JsonResponse({"status": "Received water request"}, status=200)
+
 
 def water_all(request):
     """
@@ -88,6 +93,7 @@ def water_all(request):
         return JsonResponse({"status": f"Error 405: Expected POST method. Received {request.method}"}, status=405)
     return JsonResponse({"status": "Received water_all request"}, status=200)
 
+
 def save(request):
     """
     Called on logout.\n
@@ -98,6 +104,7 @@ def save(request):
         return JsonResponse({"status": f"Error 405: Expected POST method. Received {request.method}"}, status=405)
     return JsonResponse({"status": "Received save request"}, status=200)
 
+
 def load(request):
     """
     Called on login.\n
@@ -107,6 +114,7 @@ def load(request):
     if request.method != "POST":
         return JsonResponse({"status": f"Error 405: Expected POST method. Received {request.method}"}, status=405)
     return JsonResponse({"status": "Received load request"}, status=200)
+
 
 def available_plants(request):
     """
@@ -137,16 +145,15 @@ def set_is_new(request):
 #     return JsonResponse({"status": f"Error 400: Cannot find user."}, status=400)
 
 
-
-
 @api_view(['GET'])
 def current_user(request):
     """
     Determine the current user by their token, and return their data
     """
-    
+
     serializer = UserSerializer(request.user)
     return Response(serializer.data)
+
 
 class UserList(APIView):
     """
@@ -163,3 +170,128 @@ class UserList(APIView):
             return Response(serializer.data, status=status.HTTP_201_CREATED)
         return Response(serializer.errors, status=status.HTTP_400_BAD_REQUEST)
 
+
+# Shop tables
+def all_plants(request):
+    response = [{
+        'id': 1,
+        'name': 'Tutorial Flower',
+        'cost': 0,
+        'level': 0,
+        'time_to_mature': 00.01,
+        'exp_value': 40,
+        'currency': 10,
+        'region': 'Isle de Mikes',
+        'desc': 'A Simple flower to teach you the ways of the garden.'
+    },
+        {
+            'id': 2,
+            'name': 'Emmay Bud',
+            'cost': 2,
+            'level': 1,
+            'time_to_mature': 05.00,
+            'exp_value': 5,
+            'currency': 3,
+            'region': 'Kahului',
+            'desc': 'Strange bud that comes from a far away island.'
+    },
+        {
+            'id': 3,
+            'name': 'J Hideout',
+            'cost': 2,
+            'level': 1,
+            'time_to_mature': 05.00,
+            'exp_value': 5,
+            'currency': 3,
+            'region': 'Missouri',
+            'desc': 'Inexplicably fades in and out of view as if seen through a low-quality camera.'
+    },
+        {
+            'id': 4,
+            'name': 'Silly-Dilly',
+            'cost': 3,
+            'level': 2,
+            'time_to_mature': 08.00,
+            'exp_value': 5,
+            'currency': 5,
+            'region': 'Ellenton',
+            'desc': 'Is said to be the top in the leather community but no one knows what he means because he never leaves his garden.'
+    },
+        {
+            'id': 5,
+            'name': 'Jerelily',
+            'cost': 3,
+            'level': 2,
+            'time_to_mature': 08.00,
+            'exp_value': 5,
+            'currency': 5,
+            'region': 'Qubec',
+            'desc': 'Though not native to the reagion, the Jerelily found its way to the frozen area of the North.'
+    },
+        {
+            'id': 6,
+            'name': 'Timint',
+            'cost': 5,
+            'level': 3,
+            'time_to_mature': 11.00,
+            'exp_value': 5,
+            'currency': 9,
+            'region': 'New Orleans',
+            'desc': 'The Timint has forced itself to become purple through sheer wilpower.'
+    },
+        {
+            'id': 7,
+            'name': 'Augie Beauty',
+            'cost': 7,
+            'level': 3,
+            'time_to_mature': 11.00,
+            'exp_value': 5,
+            'currency': 11,
+            'region': 'Chicago',
+            'desc': 'If you ever need a link for any topic the Augie Beauty has you covered.'
+    },
+        {
+            'id': 8,
+            'name': 'Geovannirod',
+            'cost': 10,
+            'level': 4,
+            'time_to_mature': 14.00,
+            'exp_value': 5,
+            'currency': 14,
+            'region': 'River Grove',
+            'desc': 'The Geovannirod has a heart of gold and legend says it has written a book about soccer.'
+    },
+        {
+            'id': 9,
+            'name': 'Heather',
+            'cost': 10,
+            'level': 4,
+            'time_to_mature': 14.00,
+            'exp_value': 5,
+            'currency': 14,
+            'region': 'Columbia',
+            'desc': 'You will often see the Heather flower solving puzzles while dreaming about going for a nice hike.'
+    },
+        {
+            'id': 10,
+            'name': 'Tom Blossom',
+            'cost': 12,
+            'level': 5,
+            'time_to_mature': 17.00,
+            'exp_value': 5,
+            'currency': 17,
+            'region': 'Zoomtopia',
+            'desc': 'Often near a brick surrounding. The Tom Blossom gets excited when talking about bank drop boxes.'
+    },
+        {
+            'id': 11,
+            'name': 'Noalion',
+            'cost': 12,
+            'level': 5,
+            'time_to_mature': 17.00,
+            'exp_value': 5,
+            'currency': 17,
+            'region': 'Slackville',
+            'desc': 'Ever so entergetic, the Noalion spends time being surrounded by birds.'
+    }]
+    return JsonResponse(response, safe=False)
