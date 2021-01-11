@@ -5,11 +5,11 @@ from .serializers import PlantSerializer, Plants_in_gardenSerializer, GardenSeri
 import json
 # from django.contrib.auth.models import User
 from rest_framework import permissions, status
-from rest_framework.decorators import api_view
+from rest_framework.decorators import api_view, authentication_classes, permission_classes
 from rest_framework.response import Response
 from rest_framework.views import APIView
 from rest_framework.viewsets import ModelViewSet
-
+from django.views.decorators.csrf import csrf_exempt
 
 # Helper Functions
 def _get_user(user_id):
@@ -47,19 +47,36 @@ def _get_plant_in_garden(garden_id, row_number, column_number):
 
 
 # Route functions
+# @csrf_exempt
+@api_view(['POST'])
 def harvest(request):
     """
     Called when harvesting a plant.\n
     Post data must include plant_id and user_id.
     """
-    if request.method != "POST":
-        return JsonResponse({"status": f"Error 405: Expected POST method. Received {request.method}"}, status=405)
-
+    
     # Look up plant info in Plant table
+    data = json.load(request)
+    #print(f'data: {data}')
+    #print(f'plant id: {data["plantId"]}')
+    plant = _get_plant(data["plantId"])
+    #print(plant)
     exp = 0
     currency = 0
+    if plant:
+        exp = plant.exp_value
+        currency = plant.currency
+        #print(f"exp: {exp}, currency: {currency}")
+    else:
+        return JsonResponse({"status": f"Error: Unable to find plant with ID {data.plantId}"}, status=400)
+
+    # Get current user
     # Add currency and exp to user
-    # User.objects.
+    #print(request.user)
+    request.user.profile.xp += exp
+    request.user.profile.currency += currency
+    #print(f"Total: {request.user.profile.xp} xp and ${request.user.profile.currency}")
+    request.user.profile.save()
     return JsonResponse({"status": f"Received harvest request: Added {exp} exp and {currency} currency"}, status=200)
 
 

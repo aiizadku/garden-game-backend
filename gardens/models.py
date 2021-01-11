@@ -26,7 +26,7 @@ class Plant(models.Model):
     description = models.CharField(max_length=120)
 
     def __str__(self):
-        return f"{self.flower_name} {self.level} {self.desc}"
+        return f"{self.flower_name}, lvl: {self.level}, {self.description}"
 
 
 class Garden(models.Model):
