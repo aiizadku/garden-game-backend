@@ -11,8 +11,6 @@ from rest_framework.views import APIView
 from rest_framework.viewsets import ModelViewSet
 
 
-
-
 # Helper Functions
 def _get_user(user_id):
     """Returns corresponding user object or None."""
@@ -21,12 +19,14 @@ def _get_user(user_id):
     except:
         return None
 
+
 def _get_plant(plant_id):
     """Returns corresponding plant object or None."""
     try:
         return Plant.objects.get(id=plant_id)
     except:
         return None
+
 
 def _get_garden(garden_id):
     """Returns corresponding garden object or None."""
@@ -35,10 +35,12 @@ def _get_garden(garden_id):
     except:
         return None
 
+
 def _get_plant_in_garden(garden_id, row_number, column_number):
     """Returns corresponding plant_in_garden or None."""
-    plant = Plants_in_garden.objects.filter(garden_id=garden_id).filter(row_num=row_number).filter(column_num=column_number)
-    if len(plant) > 0: # Should only be 1 plant in that location
+    plant = Plants_in_garden.objects.filter(garden_id=garden_id).filter(
+        row_num=row_number).filter(column_num=column_number)
+    if len(plant) > 0:  # Should only be 1 plant in that location
         return plant[0]
     else:
         return None
@@ -52,13 +54,14 @@ def harvest(request):
     """
     if request.method != "POST":
         return JsonResponse({"status": f"Error 405: Expected POST method. Received {request.method}"}, status=405)
-    
+
     # Look up plant info in Plant table
     exp = 0
     currency = 0
     # Add currency and exp to user
     # User.objects.
     return JsonResponse({"status": f"Received harvest request: Added {exp} exp and {currency} currency"}, status=200)
+
 
 def plant(request):
     """
@@ -69,6 +72,7 @@ def plant(request):
         return JsonResponse({"status": f"Error 405: Expected POST method. Received {request.method}"}, status=405)
     return JsonResponse({"status": "Received plant request"}, status=200)
 
+
 def water(request):
     """
     Called when adding or removing the watered status to a plant.\n
@@ -77,6 +81,7 @@ def water(request):
     if request.method != "POST":
         return JsonResponse({"status": f"Error 405: Expected POST method. Received {request.method}"}, status=405)
     return JsonResponse({"status": "Received water request"}, status=200)
+
 
 def water_all(request):
     """
@@ -88,6 +93,7 @@ def water_all(request):
         return JsonResponse({"status": f"Error 405: Expected POST method. Received {request.method}"}, status=405)
     return JsonResponse({"status": "Received water_all request"}, status=200)
 
+
 def save(request):
     """
     Called on logout.\n
@@ -98,6 +104,7 @@ def save(request):
         return JsonResponse({"status": f"Error 405: Expected POST method. Received {request.method}"}, status=405)
     return JsonResponse({"status": "Received save request"}, status=200)
 
+
 def load(request):
     """
     Called on login.\n
@@ -107,6 +114,7 @@ def load(request):
     if request.method != "POST":
         return JsonResponse({"status": f"Error 405: Expected POST method. Received {request.method}"}, status=405)
     return JsonResponse({"status": "Received load request"}, status=200)
+
 
 def available_plants(request):
     """
@@ -137,16 +145,16 @@ def set_is_new(request):
 #     return JsonResponse({"status": f"Error 400: Cannot find user."}, status=400)
 
 
-
-
 @api_view(['GET'])
 def current_user(request):
     """
     Determine the current user by their token, and return their data
     """
-    
+
     serializer = UserSerializer(request.user)
     return Response(serializer.data)
+
+
 
 class UserList(APIView):
     """
@@ -162,4 +170,3 @@ class UserList(APIView):
             serializer.save()
             return Response(serializer.data, status=status.HTTP_201_CREATED)
         return Response(serializer.errors, status=status.HTTP_400_BAD_REQUEST)
-

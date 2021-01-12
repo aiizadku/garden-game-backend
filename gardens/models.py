@@ -19,17 +19,18 @@ class Plant(models.Model):
     flower_name = models.CharField(max_length=30)
     cost = models.IntegerField()
     level = models.IntegerField()
-    time_to_mature = models.IntegerField()
+    time_to_mature = models.FloatField()
     exp_value = models.IntegerField()
     currency = models.IntegerField()
-    desc = models.CharField(max_length=120)
+    region = models.CharField(max_length=50)
+    description = models.CharField(max_length=120)
 
     def __str__(self):
         return f"{self.flower_name} {self.level} {self.desc}"
 
 
 class Garden(models.Model):
-    user_id = models.ForeignKey(User, on_delete=models.CASCADE)
+    user = models.OneToOneField(User, on_delete=models.CASCADE, related_name="garden")
     rows = models.IntegerField(default=2)
     columns = models.IntegerField(default=4)
 
