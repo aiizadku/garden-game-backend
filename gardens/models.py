@@ -6,7 +6,7 @@ User = get_user_model()
 class Game(models.Model):
     current_level = models.IntegerField(default=0)
     xp = models.IntegerField(default=0)
-    currency = models.IntegerField(default=0)
+    current_balance = models.IntegerField(default=0)
     city = models.CharField(blank=True, max_length=150) #took out null attribute
     state = models.CharField(blank=True, max_length=150)
     user = models.OneToOneField(User, on_delete=models.CASCADE, related_name="profile")
@@ -28,11 +28,11 @@ class Plant(models.Model):
     def __str__(self):
         return f"{self.flower_name} {self.level} {self.desc}"
 
-
+# changed user to OneToOneField instead of foreign key. may have to change this back depending on functionality
 class Garden(models.Model):
-    user = models.OneToOneField(User, on_delete=models.CASCADE, related_name="garden")
     rows = models.IntegerField(default=2)
     columns = models.IntegerField(default=4)
+    user = models.OneToOneField(User, on_delete=models.CASCADE, related_name='garden')
 
     def __str__(self):
         return f"Garden owned by User {self.user_id}"
