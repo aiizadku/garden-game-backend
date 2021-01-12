@@ -19,10 +19,11 @@ class Plant(models.Model):
     flower_name = models.CharField(max_length=30)
     cost = models.IntegerField()
     level = models.IntegerField()
-    time_to_mature = models.IntegerField()
+    time_to_mature = models.FloatField()
     exp_value = models.IntegerField()
-    harvest_value = models.IntegerField()
-    desc = models.CharField(max_length=120)
+    currency = models.IntegerField()
+    region = models.CharField(max_length=50)
+    description = models.CharField(max_length=120)
 
     def __str__(self):
         return f"{self.flower_name} {self.level} {self.desc}"

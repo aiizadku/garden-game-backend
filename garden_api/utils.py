@@ -5,5 +5,5 @@ def my_jwt_response_handler(token, user=None, request=None):
         'token': token,
         'user': UserSerializer(user, context={'request': request}).data,
         'profile': ProfileSerializer(user.profile).data,
-        # 'garden': GardenSerializer(user.garden).data,
+        'garden' : GardenSerializer(user.garden).data
     }
