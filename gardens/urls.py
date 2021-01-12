@@ -15,7 +15,3 @@ urlpatterns = [
     path("available_plants/", views.available_plants),
     path("set_is_new/", views.set_is_new)
 ]
-
-
-    
-

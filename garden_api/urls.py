@@ -10,6 +10,5 @@ urlpatterns = [
     path('token-auth/', obtain_jwt_token),
     path('gardens/', include('gardens.urls')),
     path('api/', include(router.urls))
-
 ]
     
