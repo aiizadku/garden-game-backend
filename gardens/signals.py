@@ -2,7 +2,7 @@ from django.contrib.auth import get_user_model
 from django.dispatch import receiver
 from django.db.models.signals import post_save
 
-from gardens.models import Game
+from gardens.models import Game, Garden
 
 User = get_user_model()
 
@@ -24,3 +24,4 @@ def create_game_profile(sender, instance, created, **kwargs):
         game = Game.objects.create(user=instance)
         instance.profile = game
         instance.profile.save()
+            
