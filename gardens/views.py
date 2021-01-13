@@ -1,7 +1,7 @@
 from django.shortcuts import render
 from django.http import JsonResponse, HttpResponseRedirect
-from .models import Garden, User, Plant, Plants_in_garden
-from .serializers import PlantSerializer, Plants_in_gardenSerializer, GardenSerializer, UserSerializer, UserSerializerWithToken, AllPlantsSerializer
+from .models import Garden, User, Plant, Plants_in_garden, Game
+from .serializers import PlantSerializer, Plants_in_gardenSerializer, GardenSerializer, UserSerializer, UserSerializerWithToken, ProfileSerializer, AllPlantsSerializer
 import json
 # from django.contrib.auth.models import User
 from rest_framework import permissions, status
@@ -193,9 +193,10 @@ def current_user(request):
     """
     Determine the current user by their token, and return their data
     """
-
+    
     serializer = UserSerializer(request.user)
     return Response(serializer.data)
+
 
 
 class UserList(APIView):
@@ -214,136 +215,18 @@ class UserList(APIView):
         return Response(serializer.errors, status=status.HTTP_400_BAD_REQUEST)
 
 
-# Shop tables
-def all_plants(request):
-    response = [{
-        'id': 1,
-        'name': 'Tutorial Flower',
-        'cost': 0,
-        'level': 0,
-        'time_to_mature': 00.01,
-        'exp_value': 40,
-        'currency': 10,
-        'region': 'Isle de Mikes',
-        'desc': 'A Simple flower to teach you the ways of the garden.'
-    },
-        {
-            'id': 2,
-            'name': 'Emmay Bud',
-            'cost': 2,
-            'level': 1,
-            'time_to_mature': 05.00,
-            'exp_value': 5,
-            'currency': 3,
-            'region': 'Kahului',
-            'desc': 'Strange bud that comes from a far away island.'
-    },
-        {
-            'id': 3,
-            'name': 'J Hideout',
-            'cost': 2,
-            'level': 1,
-            'time_to_mature': 05.00,
-            'exp_value': 5,
-            'currency': 3,
-            'region': 'Missouri',
-            'desc': 'Inexplicably fades in and out of view as if seen through a low-quality camera.'
-    },
-        {
-            'id': 4,
-            'name': 'Silly-Dilly',
-            'cost': 3,
-            'level': 2,
-            'time_to_mature': 08.00,
-            'exp_value': 5,
-            'currency': 5,
-            'region': 'Ellenton',
-            'desc': 'Is said to be the top in the leather community but no one knows what he means because he never leaves his garden.'
-    },
-        {
-            'id': 5,
-            'name': 'Jerelily',
-            'cost': 3,
-            'level': 2,
-            'time_to_mature': 08.00,
-            'exp_value': 5,
-            'currency': 5,
-            'region': 'Qubec',
-            'desc': 'Though not native to the reagion, the Jerelily found its way to the frozen area of the North.'
-    },
-        {
-            'id': 6,
-            'name': 'Timint',
-            'cost': 5,
-            'level': 3,
-            'time_to_mature': 11.00,
-            'exp_value': 5,
-            'currency': 9,
-            'region': 'New Orleans',
-            'desc': 'The Timint has forced itself to become purple through sheer wilpower.'
-    },
-        {
-            'id': 7,
-            'name': 'Augie Beauty',
-            'cost': 7,
-            'level': 3,
-            'time_to_mature': 11.00,
-            'exp_value': 5,
-            'currency': 11,
-            'region': 'Chicago',
-            'desc': 'If you ever need a link for any topic the Augie Beauty has you covered.'
-    },
-        {
-            'id': 8,
-            'name': 'Geovannirod',
-            'cost': 10,
-            'level': 4,
-            'time_to_mature': 14.00,
-            'exp_value': 5,
-            'currency': 14,
-            'region': 'River Grove',
-            'desc': 'The Geovannirod has a heart of gold and legend says it has written a book about soccer.'
-    },
-        {
-            'id': 9,
-            'name': 'Heather',
-            'cost': 10,
-            'level': 4,
-            'time_to_mature': 14.00,
-            'exp_value': 5,
-            'currency': 14,
-            'region': 'Columbia',
-            'desc': 'You will often see the Heather flower solving puzzles while dreaming about going for a nice hike.'
-    },
-        {
-            'id': 10,
-            'name': 'Tom Blossom',
-            'cost': 12,
-            'level': 5,
-            'time_to_mature': 17.00,
-            'exp_value': 5,
-            'currency': 17,
-            'region': 'Zoomtopia',
-            'desc': 'Often near a brick surrounding. The Tom Blossom gets excited when talking about bank drop boxes.'
-    },
-        {
-            'id': 11,
-            'name': 'Noalion',
-            'cost': 12,
-            'level': 5,
-            'time_to_mature': 17.00,
-            'exp_value': 5,
-            'currency': 17,
-            'region': 'Slackville',
-            'desc': 'Ever so entergetic, the Noalion spends time being surrounded by birds.'
-    }]
-    return JsonResponse(response, safe=False)
-
 @api_view(["GET"])
 def plant_detail(request, plant_id):
     plant = _get_plant(plant_id)
     if plant is None:
         return JsonResponse({"status": "Invalid plant ID"}, status=400)
-
     data = PlantSerializer(plant)
     return JsonResponse(data.data, status=200)
+
+class ProfileViewSet(ModelViewSet):
+
+    permission_classes = (permissions.AllowAny,)
+
+    serializer_class = ProfileSerializer
+    queryset = Game.objects.all()
+

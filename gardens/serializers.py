@@ -43,7 +43,7 @@ class PlantSerializer(serializers.ModelSerializer):
 class GardenSerializer(ModelSerializer):
     class Meta:
         model = Garden
-        fields = ('user_id', 'rows', 'columns')
+        fields = ('user', 'rows', 'columns')
 
 class Plants_in_gardenSerializer(ModelSerializer):
     class Meta:
@@ -86,4 +86,3 @@ class UserSerializerWithToken(serializers.ModelSerializer):
     class Meta:
         model = User
         fields = '__all__'
-

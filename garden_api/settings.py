@@ -121,12 +121,12 @@ REST_FRAMEWORK = {
     ),
 }
 
-# REST_FRAMEWORK_EXTENSIONS = {
-#     'DEFAULT_OBJECT_CACHE_KEY_FUNC':
-#       'rest_framework_extensions.utils.default_object_cache_key_func',
-#     'DEFAULT_LIST_CACHE_KEY_FUNC':
-#       'rest_framework_extensions.utils.default_list_cache_key_func',
-# }
+REST_FRAMEWORK_EXTENSIONS = {
+    'DEFAULT_OBJECT_CACHE_KEY_FUNC':
+      'rest_framework_extensions.utils.default_object_cache_key_func',
+    'DEFAULT_LIST_CACHE_KEY_FUNC':
+      'rest_framework_extensions.utils.default_list_cache_key_func',
+}
 
 JWT_AUTH = {
     'JWT_RESPONSE_PAYLOAD_HANDLER': 'garden_api.utils.my_jwt_response_handler'
