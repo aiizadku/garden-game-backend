@@ -35,11 +35,11 @@ class Garden(models.Model):
     columns = models.IntegerField(default=4)
 
     def __str__(self):
-        return f"Garden owned by User {self.user_id}"
+        return f"Garden owned by User {self.user}"
 
 class Plants_in_garden(models.Model):
     plant_id = models.ForeignKey(Plant, on_delete=models.CASCADE)
-    garden_id = models.ForeignKey(Garden, on_delete=models.CASCADE)
+    garden_id = models.ForeignKey(Garden, on_delete=models.CASCADE, related_name="plants_in_garden")
     harvested = models.BooleanField()
     watered = models.BooleanField()
     remaining_time = models.IntegerField()

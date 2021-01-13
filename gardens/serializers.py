@@ -4,10 +4,41 @@ from django.contrib.auth.models import User
 from rest_framework.serializers import ModelSerializer
 from .models import Game, Garden, Plant, Plants_in_garden
 
-class PlantSerializer(ModelSerializer):
+
+class AllPlantsSerializer:
+    """
+    Takes in array of Plant objects.
+    """
+    def __init__(self, data):
+        self.data = data
+        
+    @property
+    def all_plants(self):
+        """
+        Returns json object in form {"plants": [...]}
+        """
+        output = {'plants': []}
+        for item in self.data:
+            plant_detail = {
+                'id': item.id,
+                'flower_name': item.flower_name,
+                'cost': item.cost,
+                'level': item.level,
+                'time_to_mature': item.time_to_mature,
+                'exp_value': item.exp_value,
+                'currency': item.currency,
+                'region': item.region,
+                'description': item.description
+            }
+            output['plants'].append(plant_detail)
+
+        return output
+            
+
+class PlantSerializer(serializers.ModelSerializer):
     class Meta:
         model = Plant
-        fields = ('id', 'flower_name', 'region', 'cost', 'level', 'time_to_mature', 'exp_value', 'currency', 'desc')
+        fields = ['id', 'flower_name', 'cost', 'level', 'time_to_mature', 'exp_value', 'currency', 'region', 'description']
 
 class GardenSerializer(ModelSerializer):
     class Meta:
