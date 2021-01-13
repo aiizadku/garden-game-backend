@@ -1,15 +1,15 @@
 from django.shortcuts import render
 from django.http import JsonResponse, HttpResponseRedirect
 from .models import Garden, User, Plant, Plants_in_garden, Game
-from .serializers import PlantSerializer, Plants_in_gardenSerializer, GardenSerializer, UserSerializer, UserSerializerWithToken, ProfileSerializer
+from .serializers import PlantSerializer, Plants_in_gardenSerializer, GardenSerializer, UserSerializer, UserSerializerWithToken, ProfileSerializer, AllPlantsSerializer
 import json
 # from django.contrib.auth.models import User
 from rest_framework import permissions, status
-from rest_framework.decorators import api_view
+from rest_framework.decorators import api_view, authentication_classes, permission_classes
 from rest_framework.response import Response
 from rest_framework.views import APIView
 from rest_framework.viewsets import ModelViewSet
-
+from django.views.decorators.csrf import csrf_exempt
 
 # Helper Functions
 def _get_user(user_id):
@@ -47,29 +47,70 @@ def _get_plant_in_garden(garden_id, row_number, column_number):
 
 
 # Route functions
+# @csrf_exempt
+@api_view(['POST'])
 def harvest(request):
     """
     Called when harvesting a plant.\n
     Post data must include plant_id and user_id.
     """
-    if request.method != "POST":
-        return JsonResponse({"status": f"Error 405: Expected POST method. Received {request.method}"}, status=405)
-
+    
     # Look up plant info in Plant table
+    data = json.load(request)
+    #print(f'data: {data}')
+    #print(f'plant id: {data["plantId"]}')
+    plant = _get_plant(data["plantId"])
+    #print(plant)
     exp = 0
     currency = 0
+    if plant:
+        exp = plant.exp_value
+        currency = plant.currency
+        #print(f"exp: {exp}, currency: {currency}")
+    else:
+        return JsonResponse({"status": f"Error: Unable to find plant with ID {data.plantId}"}, status=400)
+
+    # Get current user
     # Add currency and exp to user
-    # User.objects.
+    #print(request.user)
+    request.user.profile.xp += exp
+    request.user.profile.currency += currency
+    #print(f"Total: {request.user.profile.xp} xp and ${request.user.profile.currency}")
+    request.user.profile.save()
     return JsonResponse({"status": f"Received harvest request: Added {exp} exp and {currency} currency"}, status=200)
 
 
+'''
+let data = {
+    "row": rowColData[0],
+    "column": rowColData[1],
+    "plantId": plantId
+}
+'''
+
+@api_view(["POST"])
 def plant(request):
     """
     Called when planting in a garden.\n
-    Post data must include user_id, plant_id, row_number, column_number, is_raining.
+    Post data must include plantId, row, column (to add later: is_raining).
+    Adds new plant at location row, column.
     """
-    if request.method != "POST":
-        return JsonResponse({"status": f"Error 405: Expected POST method. Received {request.method}"}, status=405)
+    print("PLANTING A PLANT!")
+    data = json.load(request)
+    plant = _get_plant(data["plantId"])
+    if plant is None:
+        return JsonResponse({"status": "Plant not found"}, status=400)
+
+    new_plant = Plants_in_garden.objects.create(
+        plant_id=plant,
+        row_num=data["row"],
+        column_num=data["column"],
+        garden_id=request.user.garden,
+        harvested=False,
+        watered=False,
+        remaining_time=plant.time_to_mature)
+    new_plant.save()
+
     return JsonResponse({"status": "Received plant request"}, status=200)
 
 
@@ -115,17 +156,19 @@ def load(request):
         return JsonResponse({"status": f"Error 405: Expected POST method. Received {request.method}"}, status=405)
     return JsonResponse({"status": "Received load request"}, status=200)
 
-
+@api_view(['GET'])
 def available_plants(request):
     """
-    Called when buying a plant.\n
-    Post data must include user_id.\n
+    Called when opening seed buying menu.\n
     Returns {"plants": [ {plant info}, ... ]} filtered by user level,\n
     where user level is >= 1.
     """
-    if request.method != "POST":
-        return JsonResponse({"status": f"Error 405: Expected POST method. Received {request.method}"}, status=405)
-    return JsonResponse({"plants": ["plant info", "plant info"]}, status=200)
+    #print(request.user.id)
+    filter_level = request.user.profile.current_level
+    data = list(Plant.objects.filter(level__lte=filter_level))
+    serialized_data = AllPlantsSerializer(data).all_plants
+
+    return JsonResponse(serialized_data, status=200)
 
 
 def set_is_new(request):
@@ -172,9 +215,18 @@ class UserList(APIView):
         return Response(serializer.errors, status=status.HTTP_400_BAD_REQUEST)
 
 
+@api_view(["GET"])
+def plant_detail(request, plant_id):
+    plant = _get_plant(plant_id)
+    if plant is None:
+        return JsonResponse({"status": "Invalid plant ID"}, status=400)
+    data = PlantSerializer(plant)
+    return JsonResponse(data.data, status=200)
+
 class ProfileViewSet(ModelViewSet):
 
     permission_classes = (permissions.AllowAny,)
 
     serializer_class = ProfileSerializer
     queryset = Game.objects.all()
+

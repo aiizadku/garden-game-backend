@@ -13,5 +13,7 @@ urlpatterns = [
     path("save/", views.save),
     path("load/", views.load),
     path("available_plants/", views.available_plants),
-    path("set_is_new/", views.set_is_new)
+    path("set_is_new/", views.set_is_new),
+    path("all_plants/", views.all_plants),
+    path("plants/<int:plant_id>", views.plant_detail)
 ]
