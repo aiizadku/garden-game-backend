@@ -74,7 +74,7 @@ def harvest(request):
     # Add currency and exp to user
     #print(request.user)
     request.user.profile.xp += exp
-    request.user.profile.currency += currency
+    request.user.profile.current_balance += currency
     #print(f"Total: {request.user.profile.xp} xp and ${request.user.profile.currency}")
     request.user.profile.save()
     return JsonResponse({"status": f"Received harvest request: Added {exp} exp and {currency} currency"}, status=200)
