@@ -1,7 +1,7 @@
 from django.shortcuts import render
 from django.http import JsonResponse, HttpResponseRedirect
-from .models import Garden, User, Plant, Plants_in_garden
-from .serializers import PlantSerializer, Plants_in_gardenSerializer, GardenSerializer, UserSerializer, UserSerializerWithToken
+from .models import Garden, User, Plant, Plants_in_garden, Game
+from .serializers import PlantSerializer, Plants_in_gardenSerializer, GardenSerializer, UserSerializer, UserSerializerWithToken, ProfileSerializer
 import json
 # from django.contrib.auth.models import User
 from rest_framework import permissions, status
@@ -150,7 +150,7 @@ def current_user(request):
     """
     Determine the current user by their token, and return their data
     """
-
+    
     serializer = UserSerializer(request.user)
     return Response(serializer.data)
 
@@ -170,3 +170,11 @@ class UserList(APIView):
             serializer.save()
             return Response(serializer.data, status=status.HTTP_201_CREATED)
         return Response(serializer.errors, status=status.HTTP_400_BAD_REQUEST)
+
+
+class ProfileViewSet(ModelViewSet):
+
+    permission_classes = (permissions.AllowAny,)
+
+    serializer_class = ProfileSerializer
+    queryset = Game.objects.all()
