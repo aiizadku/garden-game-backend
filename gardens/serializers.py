@@ -57,10 +57,12 @@ class ProfileSerializer(serializers.ModelSerializer):
         fields = '__all__'
 
 class UserSerializer(serializers.ModelSerializer):
+    profile = ProfileSerializer(read_only=True)
+    garden =  GardenSerializer(read_only=True)
 
     class Meta:
         model = User
-        fields = '__all__'
+        fields = ['id', 'username', 'profile', 'garden']
 
 class UserSerializerWithToken(serializers.ModelSerializer):
 
