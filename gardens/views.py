@@ -1,7 +1,7 @@
 from django.shortcuts import render
 from django.http import JsonResponse, HttpResponseRedirect
 from .models import Garden, User, Plant, Plants_in_garden, Game
-from .serializers import PlantSerializer, Plants_in_gardenSerializer, GardenSerializer, UserSerializer, UserSerializerWithToken, ProfileSerializer, AllPlantsSerializer
+from .serializers import PlantSerializer, Plants_in_gardenSerializer, GardenSerializer, UserSerializer, UserSerializerWithToken, ProfileSerializer, AllPlantsSerializer, AllPlantsInGardenSerializer
 import json
 # from django.contrib.auth.models import User
 from rest_framework import permissions, status
@@ -52,15 +52,19 @@ def _get_plant_in_garden(garden_id, row_number, column_number):
 def harvest(request):
     """
     Called when harvesting a plant.\n
-    Post data must include plant_id and user_id.
+    Post data must include plant_id, row, column in body and token in header.
     """
     
     # Look up plant info in Plant table
     data = json.load(request)
-    #print(f'data: {data}')
-    #print(f'plant id: {data["plantId"]}')
     plant = _get_plant(data["plantId"])
-    #print(plant)
+
+    planted_plant = Plants_in_garden.objects.filter(garden_id=request.user.garden.id).filter(row_num=data["row"]).filter(column_num=data["column"])
+    if len(planted_plant) == 0:
+        return JsonResponse({"Status": "No plants planted in request harvest location."}, status=400)
+    else:
+        list(planted_plant)[0].delete()
+
     exp = 0
     currency = 0
     if plant:
@@ -80,13 +84,6 @@ def harvest(request):
     return JsonResponse({"status": f"Received harvest request: Added {exp} exp and {currency} currency"}, status=200)
 
 
-'''
-let data = {
-    "row": rowColData[0],
-    "column": rowColData[1],
-    "plantId": plantId
-}
-'''
 
 @api_view(["POST"])
 def plant(request):
@@ -97,6 +94,13 @@ def plant(request):
     """
     print("PLANTING A PLANT!")
     data = json.load(request)
+
+    print("checking for empty plot...")
+    planted_plants = Plants_in_garden.objects.filter(garden_id=request.user.garden.id).filter(row_num=data["row"]).filter(column_num=data["column"])
+    if len(planted_plants) > 0:
+        print("Plot is not empty. Cannot plant.")
+        return JsonResponse({"status": "Plot is not empty. Cannot plant."}, status=400)
+
     plant = _get_plant(data["plantId"])
     if plant is None:
         return JsonResponse({"status": "Plant not found"}, status=400)
@@ -146,15 +150,22 @@ def save(request):
     return JsonResponse({"status": "Received save request"}, status=200)
 
 
+@api_view(["GET"])
 def load(request):
     """
     Called on login.\n
-    Post data must include user_id, garden_id.\n
+    Post data must include token in header.\n
+    Adds time_to_mature from plant with matching plant ID.
     Returns {plant_statuses: [ {watered, remaining_time, time_to_mature, plant_id, column_number, row_number}, ... ]
     """
-    if request.method != "POST":
-        return JsonResponse({"status": f"Error 405: Expected POST method. Received {request.method}"}, status=405)
-    return JsonResponse({"status": "Received load request"}, status=200)
+    # Get user's garden
+    garden = request.user.garden
+    # Get all plants planted in user's garden
+    plants = list(Plants_in_garden.objects.filter(garden_id=garden.id))
+    # Serialize plants
+    data = AllPlantsInGardenSerializer(plants).all_plants_in_garden
+
+    return JsonResponse(data, status=200)
 
 @api_view(['GET'])
 def available_plants(request):
@@ -165,7 +176,7 @@ def available_plants(request):
     """
     #print(request.user.id)
     filter_level = request.user.profile.current_level
-    data = list(Plant.objects.filter(level__lte=filter_level))
+    data = list(Plant.objects.filter(level__lte=filter_level).order_by('id'))
     serialized_data = AllPlantsSerializer(data).all_plants
 
     return JsonResponse(serialized_data, status=200)

@@ -5,6 +5,14 @@ from rest_framework.serializers import ModelSerializer
 from .models import Game, Garden, Plant, Plants_in_garden
 
 
+def _get_plant(plant_id):
+    """Returns corresponding plant object or None."""
+    try:
+        return Plant.objects.get(id=plant_id)
+    except:
+        return None
+        
+
 class AllPlantsSerializer:
     """
     Takes in array of Plant objects.
@@ -33,7 +41,7 @@ class AllPlantsSerializer:
             output['plants'].append(plant_detail)
 
         return output
-            
+        
 
 class PlantSerializer(serializers.ModelSerializer):
     class Meta:
@@ -49,6 +57,41 @@ class Plants_in_gardenSerializer(ModelSerializer):
     class Meta:
         model = Plants_in_garden
         fields = ('plant_id', 'garden_id', 'harvested', 'watered', 'remaining_time', 'row_num', 'column_num')
+
+class AllPlantsInGardenSerializer:
+    """
+    Takes in array of Plant_in_garden objects.
+    """
+    def __init__(self, data):
+        self.data = data
+        
+    @property
+    def all_plants_in_garden(self):
+        """
+        Returns json object in form {"plants": [...]}
+        """
+        output = {'plants': []}
+        for item in self.data:
+            plant_time_to_mature = _get_plant(item.plant_id.id)
+            if plant_time_to_mature is not None:
+                plant_time_to_mature = plant_time_to_mature.time_to_mature
+            else:
+                # Should never happen
+                plant_time_to_mature = 0
+
+            plants_in_garden_detail = {
+                'plant_id': item.plant_id.id,
+                'garden_id': item.garden_id.id,
+                'harvested': item.harvested,
+                'watered': item.watered,
+                'remaining_time': item.remaining_time,
+                'time_to_mature': plant_time_to_mature,
+                'row_num': item.row_num,
+                'column_num': item.column_num
+            }
+            output['plants'].append(plants_in_garden_detail)
+            print(plants_in_garden_detail)
+        return output
 
 
 class ProfileSerializer(serializers.ModelSerializer):
