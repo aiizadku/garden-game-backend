@@ -40,4 +40,4 @@ VALUES ('Tom Blossom', 12, 5, 17.00, 5, 17, 'Zoomtopia', 'Often near a brick sur
 
 -- 11
 INSERT INTO gardens_plant(flower_name, cost, level, time_to_mature, exp_value, currency, region, description) 
-VALUES ('Noalion', 12, 5, 17.00, 5, 17, 'Slackville', 'Ever so entergetic, the Noalion spends time being surrounded by birds.');
+VALUES ('Noalion', 12, 5, 17.00, 5, 17, 'Slackville', 'Ever so energetic, the Noalion spends time being surrounded by birds.');
