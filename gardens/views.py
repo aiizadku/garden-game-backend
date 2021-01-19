@@ -241,3 +241,9 @@ class ProfileViewSet(ModelViewSet):
     serializer_class = ProfileSerializer
     queryset = Game.objects.all()
 
+class StatsList(ModelViewSet):
+
+    permission_classes = (permissions.AllowAny,)
+
+    serializer_class = UserSerializer
+    queryset = User.objects.all()
