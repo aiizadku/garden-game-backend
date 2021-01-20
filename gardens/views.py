@@ -139,15 +139,34 @@ def water_all(request):
     return JsonResponse({"status": "Received water_all request"}, status=200)
 
 
+@api_view(["POST"])
 def save(request):
     """
     Called on logout.\n
-    Post data must include user_id, garden_id, plant_statuses (as an array).\n
-    plant_statuses should include {watered, remaining_time, plant_id, column_number, row_number}
+    Post data must plant_statuses (as an array).\n
+    plant_statuses should include {watered, remaining_time, plant_id, column_number, row_number, plant_id}
     """
-    if request.method != "POST":
-        return JsonResponse({"status": f"Error 405: Expected POST method. Received {request.method}"}, status=405)
-    return JsonResponse({"status": "Received save request"}, status=200)
+    count = 0
+    data = json.load(request)
+    # Get player plants
+    print(data)
+    player_plants = Plants_in_garden.objects.filter(garden_id=request.user.garden)
+    print(f"{len(player_plants)} plants found")
+    # Update each plant in Plants_in_garden
+    for plant in data["plant_statuses"]:
+        # Find match in row and col
+        found_plant = list(player_plants.filter(row_num=plant["row_number"]).filter(column_num=plant["column_number"]))
+        if len(found_plant):
+            # Get object
+            try:
+                found_plant = Plants_in_garden.objects.get(id=found_plant[0].id)
+            except:
+                print("ERROR finding plant in garden")
+            found_plant.watered = plant["watered"]
+            found_plant.remaining_time = plant["remaining_time"]
+            found_plant.save()
+            count += 1
+    return JsonResponse({"status": f"Saved garden with {count} plants."}, status=200)
 
 
 @api_view(["GET"])
